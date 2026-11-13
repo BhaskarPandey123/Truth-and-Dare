@@ -8,11 +8,17 @@ load_dotenv()
 
 app = FastAPI()
 
-# CORS: Allows your frontend to talk to this backend.
-# We will update these URLs later when you deploy.
+# CORS: We must explicitly list your Codespaces URL.
+# Using ["*"] with allow_credentials=True will cause the browser to block the request!
+origins = [
+    "https://silver-fiesta-vw7466g4v4gf66j6-5500.app.github.dev", # Your Codespaces frontend
+    "http://localhost:5500", # For local testing
+    "http://127.0.0.1:5500"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -68,3 +74,8 @@ async def get_livekit_token(room_name: str, participant_name: str):
     livekit_url = os.environ.get("LIVEKIT_URL", "wss://your-project.livekit.cloud")
     
     return {"token": token, "url": livekit_url}
+
+# Health check route (prevents Render from thinking the app crashed)
+@app.get("/healthz")
+def health_check():
+    return {"status": "ok"}
