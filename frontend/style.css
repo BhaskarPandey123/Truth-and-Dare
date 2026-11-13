@@ -1,13 +1,54 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #1a1a1a;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #121212;
     color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     height: 100vh;
     margin: 0;
+    overflow: hidden;
+}
+
+/* Video Area */
+#video-container {
+    width: 100%;
+    height: 25vh;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 2px solid #333;
+}
+
+/* Game Area */
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    width: 100%;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+#themeSelector {
+    padding: 10px;
+    font-size: 1rem;
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 8px;
+    margin-bottom: 20px;
 }
 
 .spinner-box {
@@ -18,24 +59,28 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
-    background-color: #2a2a2a;
+    margin-bottom: 30px;
+    background-color: #1e1e1e;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
-.bottle {
+.spinner-item {
     font-size: 80px;
     transition: transform 2s cubic-bezier(0.25, 1, 0.5, 1);
+    display: inline-block;
 }
 
 button {
-    padding: 15px 30px;
-    font-size: 18px;
+    padding: 15px 40px;
+    font-size: 1.2rem;
     background-color: #ff4757;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 50px;
     cursor: pointer;
     font-weight: bold;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+    transition: transform 0.1s;
 }
 
 button:active {
@@ -49,4 +94,29 @@ button:active {
 #result {
     margin-top: 20px;
     text-align: center;
+}
+
+#resultText {
+    font-size: 2.5rem;
+    color: #f1c40f;
+    text-shadow: 0 0 10px #f1c40f;
+}
+
+/* Responsive tweaks for larger screens (laptops/tablets) */
+@media (min-width: 768px) {
+    body {
+        flex-direction: row-reverse;
+    }
+    #video-container {
+        width: 40%;
+        height: 100vh;
+        border-bottom: none;
+        border-left: 2px solid #333;
+    }
+    .game-container {
+        width: 60%;
+    }
+    h1 { font-size: 3rem; }
+    .spinner-box { width: 300px; height: 300px; }
+    .spinner-item { font-size: 120px; }
 }

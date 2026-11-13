@@ -1,58 +1,68 @@
-// 1. REPLACE THIS WITH YOUR CODESPACE URL
-// Look at your browser URL. If it is https://abc-8000.app.github.dev
-// Change it to wss://abc-8000.app.github.dev/ws/game
-const WS_URL = "wss://YOUR-CODESPACE-URL-HERE.app.github.dev/ws/game"; 
+// If Railway is done, paste your Railway URL here (start with wss://)
+// Otherwise, keep your Codespace URL: wss://your-codespace-8000.app.github.dev/ws/game
+const WS_URL = "wss://YOUR-URL-HERE/ws/game"; 
 
 let ws;
-let currentPlayer = 1; // Keep track of whose turn it is
 
+// Handle UI Theme Switching
+const themeSelector = document.getElementById('themeSelector');
+const spinner = document.getElementById('spinner');
+
+themeSelector.addEventListener('change', (e) => {
+    const theme = e.target.value;
+    if (theme === 'bottle') spinner.innerText = '🍾';
+    if (theme === 'needle') spinner.innerText = '🪡';
+    if (theme === 'knife') spinner.innerText = '🔪';
+    if (theme === 'cola') spinner.innerText = '🥤';
+});
+
+// WebSocket Connection
 function connectWebSocket() {
     ws = new WebSocket(WS_URL);
 
-    ws.onopen = () => {
-        console.log("Connected to the game server!");
-    };
-
+    ws.onopen = () => console.log("Connected to the game server!");
     ws.onmessage = (event) => {
-        // This runs when the OTHER player spins, OR when the server echoes your spin
         const data = JSON.parse(event.data);
         if (data.type === "spin") {
             animateSpin(data.result);
         }
     };
-
     ws.onclose = () => {
-        console.log("Disconnected. Trying to reconnect...");
+        console.log("Disconnected. Reconnecting...");
         setTimeout(connectWebSocket, 2000);
     };
 }
 
-// Spin button logic
+// Spin Action
 document.getElementById('spinBtn').addEventListener('click', () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
-        // Randomly pick Truth or Dare
         const result = Math.random() > 0.5 ? "TRUTH" : "DARE";
-        
-        // Send to server
         ws.send(JSON.stringify({ type: "spin", result: result }));
+    } else {
+        alert("Not connected to server yet!");
     }
 });
 
+// Animation
 function animateSpin(result) {
-    const spinner = document.getElementById('spinner');
     const resultDiv = document.getElementById('result');
     const resultText = document.getElementById('resultText');
 
-    // Spin the bottle visually
-    const randomDegrees = Math.floor(Math.random() * 360) + 720; // Spin at least twice
+    // Reset rotation, then force a reflow to restart animation
+    spinner.style.transition = 'none';
+    spinner.style.transform = 'rotate(0deg)';
+    void spinner.offsetWidth; 
+    
+    spinner.style.transition = 'transform 2.5s cubic-bezier(0.25, 1, 0.5, 1)';
+    const randomDegrees = Math.floor(Math.random() * 360) + 1080; // 3 full spins
     spinner.style.transform = `rotate(${randomDegrees}deg)`;
 
-    // Wait for CSS animation to finish, then show result
+    resultDiv.classList.add('hidden'); // Hide previous result
+
     setTimeout(() => {
         resultDiv.classList.remove('hidden');
         resultText.innerText = result;
-    }, 2000); 
+    }, 2500); 
 }
 
-// Start connection
 connectWebSocket();
