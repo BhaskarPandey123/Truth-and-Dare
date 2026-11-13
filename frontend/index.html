@@ -11,25 +11,39 @@
     <!-- Video Call Container -->
     <div id="video-container">
         <div class="video-wrapper">
-            <video id="local-video" autoplay muted playsinline></video>
-            <video id="remote-video" autoplay playsinline></video>
+            <!-- Local video is strictly left -->
+            <div class="video-box">
+                <video id="local-video" autoplay muted playsinline></video>
+                <div id="local-placeholder" class="placeholder hidden">Cam Off</div>
+            </div>
+            <!-- Remote video is strictly right -->
+            <div class="video-box">
+                <video id="remote-video" autoplay playsinline></video>
+            </div>
         </div>
-        <button id="joinCallBtn">Join Video Call</button>
+        
+        <!-- Video Controls -->
+        <div id="video-controls">
+            <button id="joinCallBtn">Join Video Call</button>
+            <button id="toggleCamBtn" class="hidden control-btn">📷 Cam On</button>
+            <button id="toggleMicBtn" class="hidden control-btn">🎤 Mic On</button>
+        </div>
     </div>
 
+    <!-- Game Area -->
     <div class="game-container">
         <h1>Truth or Dare</h1>
         
-        <!-- The Spinner (Hidden when question is shown) -->
+        <!-- Spinner -->
         <div id="spinnerArea">
             <div class="spinner-box">
                 <div id="spinner" class="spinner-item">🍾</div>
             </div>
             <button id="spinBtn" disabled>SPIN</button>
-            <p id="waitingText" style="color: #aaa; margin-top: 15px;">Connect to video to enable game</p>
+            <p id="waitingText" style="color: #aaa; margin-top: 15px;">Join video to enable game</p>
         </div>
 
-        <!-- The Prompt Area (Visible to both when spun) -->
+        <!-- Prompt Area -->
         <div id="promptArea" class="hidden">
             <h2 id="turnIndicator">Player 1's Turn</h2>
             <div id="promptCard">
@@ -37,12 +51,11 @@
                 <p id="questionText">Tell us your deepest secret...</p>
             </div>
             
-            <!-- These buttons are for the OPPONENT (The one who didn't spin) -->
+            <!-- Action buttons for the opponent -->
             <div id="actionArea" class="hidden">
                 <button id="completeBtn">✅ Accept Completion</button>
                 <button id="punishBtn">🔥 Issue Punishment</button>
             </div>
-            <!-- This message is for the person who spun -->
             <p id="waitingForOpponent" class="hidden">Waiting for opponent to verify...</p>
         </div>
     </div>
