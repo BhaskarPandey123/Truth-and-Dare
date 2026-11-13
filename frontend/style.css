@@ -1,0 +1,52 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.spinner-box {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 4px solid #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    background-color: #2a2a2a;
+}
+
+.bottle {
+    font-size: 80px;
+    transition: transform 2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+button {
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.hidden {
+    display: none;
+}
+
+#result {
+    margin-top: 20px;
+    text-align: center;
+}
