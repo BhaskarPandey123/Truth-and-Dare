@@ -12,11 +12,7 @@ app = FastAPI()
 # We will update these URLs later when you deploy.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5500",  # Local testing (VS Code Live Server)
-        "http://127.0.0.1:5500",
-        "https://YOUR-USERNAME.github.io", # We will change this later
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
