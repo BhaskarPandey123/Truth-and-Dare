@@ -1,6 +1,6 @@
 // If Railway is done, paste your Railway URL here (start with wss://)
 // Otherwise, keep your Codespace URL: wss://your-codespace-8000.app.github.dev/ws/game
-const WS_URL = "wss://truth-and-dare-backend-gee9.onrender.com"; 
+const WS_URL = "wss://truth-and-dare-backend-gee9.onrender.com/ws/game"; 
 
 let ws;
 
