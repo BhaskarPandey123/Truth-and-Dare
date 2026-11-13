@@ -50,10 +50,11 @@ function connectWebSocket() {
     
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        // Check if the message came from US or the OPPONENT
         const isMe = (data.senderId === myId);
         
         if (data.type === "spin") {
+            // Lock the spin button for BOTH players the moment anyone spins
+            spinBtn.disabled = true; 
             animateSpin(data.category, data.prompt, isMe);
         } 
         else if (data.type === "complete") {
@@ -70,13 +71,16 @@ function connectWebSocket() {
 // Spin Button
 spinBtn.addEventListener('click', () => {
     if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    if (spinBtn.disabled) return; // Extra safety check
+
+    // Lock it immediately so they can't double-click
+    spinBtn.disabled = true; 
 
     const isTruth = Math.random() > 0.5;
     const category = isTruth ? "TRUTH" : "DARE";
     const pool = isTruth ? truths : dares;
     const prompt = pool[Math.floor(Math.random() * pool.length)];
 
-    // Send to server with our unique ID
     ws.send(JSON.stringify({ 
         type: "spin", 
         senderId: myId,
@@ -148,9 +152,10 @@ function resetGameUI() {
     promptArea.classList.add('hidden');
     actionArea.classList.add('hidden');
     waitingForOpponent.classList.add('hidden');
-    spinBtn.disabled = false;
     
-    // Reset colors
+    // Unlock the spin button for the next turn
+    spinBtn.disabled = false; 
+    
     document.getElementById('categoryText').style.color = "#ff4757";
     document.getElementById('spinner').style.transform = 'rotate(0deg)';
 }
@@ -168,7 +173,6 @@ document.getElementById('joinCallBtn').addEventListener('click', async () => {
         
         room = new LivekitClient.Room();
         
-        // Handle Remote Video & Audio
         room.on('trackSubscribed', (track) => {
             if (track.kind === 'video') {
                 track.attach(document.getElementById('remote-video'));
@@ -181,7 +185,6 @@ document.getElementById('joinCallBtn').addEventListener('click', async () => {
             }
         });
 
-        // Handle Local Video
         room.on('localTrackPublished', (publication) => {
             if (publication.kind === 'video') {
                 const localVideo = document.getElementById('local-video');
@@ -192,11 +195,9 @@ document.getElementById('joinCallBtn').addEventListener('click', async () => {
 
         await room.connect(data.url, data.token);
         
-        // Turn on initial tracks
         await room.localParticipant.setCameraEnabled(true);
         await room.localParticipant.setMicrophoneEnabled(true);
 
-        // UI Updates
         btn.classList.add('hidden');
         document.getElementById('toggleCamBtn').classList.remove('hidden');
         document.getElementById('toggleMicBtn').classList.remove('hidden');
@@ -211,28 +212,32 @@ document.getElementById('joinCallBtn').addEventListener('click', async () => {
     }
 });
 
-// --- 3. TOGGLE CAMERA & MIC LOGIC ---
+// --- 3. TOGGLE CAMERA & MIC LOGIC (Fixed for Android) ---
 document.getElementById('toggleCamBtn').addEventListener('click', async (e) => {
     if (!room) return;
     isCamOn = !isCamOn;
+    
+    // Toggle actual hardware
     await room.localParticipant.setCameraEnabled(isCamOn);
     
-    // Update Button UI
-    e.target.innerText = isCamOn ? "📷 Cam On" : "📷 Cam Off";
-    e.target.classList.toggle('off', !isCamOn);
+    // e.currentTarget ensures we target the BUTTON, not the text inside it
+    const btn = e.currentTarget;
+    btn.innerText = isCamOn ? "📷 Cam On" : "📷 Cam Off";
+    btn.classList.toggle('off', !isCamOn);
     
-    // Show/Hide placeholder
     document.getElementById('local-placeholder').classList.toggle('hidden', isCamOn);
 });
 
 document.getElementById('toggleMicBtn').addEventListener('click', async (e) => {
     if (!room) return;
     isMicOn = !isMicOn;
+    
+    // Toggle actual hardware
     await room.localParticipant.setMicrophoneEnabled(isMicOn);
     
-    // Update Button UI
-    e.target.innerText = isMicOn ? "🎤 Mic On" : "🎤 Mic Off";
-    e.target.classList.toggle('off', !isMicOn);
+    const btn = e.currentTarget;
+    btn.innerText = isMicOn ? "🎤 Mic On" : "🎤 Mic Off";
+    btn.classList.toggle('off', !isMicOn);
 });
 
 // Start the connection

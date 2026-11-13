@@ -24,9 +24,9 @@
         
         <!-- Video Controls -->
         <div id="video-controls">
-            <button id="joinCallBtn">Join Video Call</button>
-            <button id="toggleCamBtn" class="hidden control-btn">📷 Cam On</button>
-            <button id="toggleMicBtn" class="hidden control-btn">🎤 Mic On</button>
+            <button id="joinCallBtn" type="button">Join Video Call</button>
+            <button id="toggleCamBtn" class="hidden control-btn" type="button">📷 Cam On</button>
+            <button id="toggleMicBtn" class="hidden control-btn" type="button">🎤 Mic On</button>
         </div>
     </div>
 
@@ -39,7 +39,7 @@
             <div class="spinner-box">
                 <div id="spinner" class="spinner-item">🍾</div>
             </div>
-            <button id="spinBtn" disabled>SPIN</button>
+            <button id="spinBtn" type="button" disabled>SPIN</button>
             <p id="waitingText" style="color: #aaa; margin-top: 15px;">Join video to enable game</p>
         </div>
 
@@ -53,8 +53,8 @@
             
             <!-- Action buttons for the opponent -->
             <div id="actionArea" class="hidden">
-                <button id="completeBtn">✅ Accept Completion</button>
-                <button id="punishBtn">🔥 Issue Punishment</button>
+                <button id="completeBtn" type="button">✅ Accept Completion</button>
+                <button id="punishBtn" type="button">🔥 Issue Punishment</button>
             </div>
             <p id="waitingForOpponent" class="hidden">Waiting for opponent to verify...</p>
         </div>
