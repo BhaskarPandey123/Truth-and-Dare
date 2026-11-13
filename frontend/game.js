@@ -67,6 +67,7 @@ function animateSpin(result) {
 
 
 // --- 2. LIVEKIT VIDEO LOGIC ---
+// --- 2. LIVEKIT VIDEO LOGIC ---
 document.getElementById('joinCallBtn').addEventListener('click', async () => {
     const btn = document.getElementById('joinCallBtn');
     btn.innerText = "Connecting...";
@@ -84,6 +85,7 @@ document.getElementById('joinCallBtn').addEventListener('click', async () => {
         // Connect to LiveKit Room
         room = new LivekitClient.Room();
         
+        // 1. Listen for the REMOTE player's video
         room.on('trackSubscribed', (track) => {
             if (track.kind === 'video') {
                 track.attach(document.getElementById('remote-video'));
@@ -94,15 +96,19 @@ document.getElementById('joinCallBtn').addEventListener('click', async () => {
             }
         });
 
+        // 2. Listen for YOUR OWN video (This fixes the crash and the left box!)
+        room.on('localTrackPublished', (publication) => {
+            if (publication.kind === 'video') {
+                publication.track.attach(document.getElementById('local-video'));
+            }
+        });
+
+        // Connect to the room
         await room.connect(data.url, data.token);
         
-        // Turn on Camera and Mic
+        // Turn on Camera and Mic (This triggers the localTrackPublished event above)
         await room.localParticipant.setCameraEnabled(true);
         await room.localParticipant.setMicrophoneEnabled(true);
-        
-        // Show local video
-        const localVideoTrack = Array.from(room.localParticipant.videoTracks.values())[0].track;
-        localVideoTrack.attach(document.getElementById('local-video'));
 
         btn.innerText = "Connected!";
         btn.style.backgroundColor = "#333";
@@ -114,6 +120,5 @@ document.getElementById('joinCallBtn').addEventListener('click', async () => {
         alert("Could not connect to video. Check console for details.");
     }
 });
-
 // Start the game connection
 connectWebSocket();
