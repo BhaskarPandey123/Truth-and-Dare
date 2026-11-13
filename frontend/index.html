@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Truth or Dare</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Load LiveKit Client SDK -->
     <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
 </head>
 <body>
@@ -21,21 +20,30 @@
     <div class="game-container">
         <h1>Truth or Dare</h1>
         
-        <select id="themeSelector">
-            <option value="bottle">🍾 Beer Bottle</option>
-            <option value="needle">🪡 Needle</option>
-            <option value="knife">🔪 Knife</option>
-            <option value="cola">🥤 Old Cola Bottles</option>
-        </select>
-
-        <div class="spinner-box">
-            <div id="spinner" class="spinner-item">🍾</div>
+        <!-- The Spinner (Hidden when question is shown) -->
+        <div id="spinnerArea">
+            <div class="spinner-box">
+                <div id="spinner" class="spinner-item">🍾</div>
+            </div>
+            <button id="spinBtn" disabled>SPIN</button>
+            <p id="waitingText" style="color: #aaa; margin-top: 15px;">Connect to video to enable game</p>
         </div>
-        
-        <button id="spinBtn">SPIN</button>
-        
-        <div id="result" class="hidden">
-            <h2 id="resultText">TRUTH!</h2>
+
+        <!-- The Prompt Area (Visible to both when spun) -->
+        <div id="promptArea" class="hidden">
+            <h2 id="turnIndicator">Player 1's Turn</h2>
+            <div id="promptCard">
+                <h3 id="categoryText">TRUTH</h3>
+                <p id="questionText">Tell us your deepest secret...</p>
+            </div>
+            
+            <!-- These buttons are for the OPPONENT (The one who didn't spin) -->
+            <div id="actionArea" class="hidden">
+                <button id="completeBtn">✅ Accept Completion</button>
+                <button id="punishBtn">🔥 Issue Punishment</button>
+            </div>
+            <!-- This message is for the person who spun -->
+            <p id="waitingForOpponent" class="hidden">Waiting for opponent to verify...</p>
         </div>
     </div>
 
