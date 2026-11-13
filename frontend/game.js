@@ -1,26 +1,16 @@
-// If Railway is done, paste your Railway URL here (start with wss://)
-// Otherwise, keep your Codespace URL: wss://your-codespace-8000.app.github.dev/ws/game
+// --- CONFIGURATION ---
 const WS_URL = "wss://truth-and-dare-backend-gee9.onrender.com/ws/game"; 
+const BACKEND_URL = "https://truth-and-dare-backend-gee9.onrender.com"; 
+const ROOM_NAME = "truth-dare-room"; 
 
 let ws;
+let room;
 
-// Handle UI Theme Switching
-const themeSelector = document.getElementById('themeSelector');
-const spinner = document.getElementById('spinner');
-
-themeSelector.addEventListener('change', (e) => {
-    const theme = e.target.value;
-    if (theme === 'bottle') spinner.innerText = '🍾';
-    if (theme === 'needle') spinner.innerText = '🪡';
-    if (theme === 'knife') spinner.innerText = '🔪';
-    if (theme === 'cola') spinner.innerText = '🥤';
-});
-
-// WebSocket Connection
+// --- 1. GAME WEBSOCKET LOGIC ---
 function connectWebSocket() {
     ws = new WebSocket(WS_URL);
 
-    ws.onopen = () => console.log("Connected to the game server!");
+    ws.onopen = () => console.log("Connected to game server!");
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === "spin") {
@@ -33,31 +23,41 @@ function connectWebSocket() {
     };
 }
 
-// Spin Action
 document.getElementById('spinBtn').addEventListener('click', () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
         const result = Math.random() > 0.5 ? "TRUTH" : "DARE";
         ws.send(JSON.stringify({ type: "spin", result: result }));
     } else {
-        alert("Not connected to server yet!");
+        alert("Not connected to game server yet!");
     }
 });
 
-// Animation
+// Theme Switcher
+const themeSelector = document.getElementById('themeSelector');
+const spinner = document.getElementById('spinner');
+
+themeSelector.addEventListener('change', (e) => {
+    const theme = e.target.value;
+    if (theme === 'bottle') spinner.innerText = '🍾';
+    if (theme === 'needle') spinner.innerText = '🪡';
+    if (theme === 'knife') spinner.innerText = '🔪';
+    if (theme === 'cola') spinner.innerText = '🥤';
+});
+
+// Spin Animation
 function animateSpin(result) {
     const resultDiv = document.getElementById('result');
     const resultText = document.getElementById('resultText');
 
-    // Reset rotation, then force a reflow to restart animation
     spinner.style.transition = 'none';
     spinner.style.transform = 'rotate(0deg)';
     void spinner.offsetWidth; 
     
     spinner.style.transition = 'transform 2.5s cubic-bezier(0.25, 1, 0.5, 1)';
-    const randomDegrees = Math.floor(Math.random() * 360) + 1080; // 3 full spins
+    const randomDegrees = Math.floor(Math.random() * 360) + 1080;
     spinner.style.transform = `rotate(${randomDegrees}deg)`;
 
-    resultDiv.classList.add('hidden'); // Hide previous result
+    resultDiv.classList.add('hidden');
 
     setTimeout(() => {
         resultDiv.classList.remove('hidden');
@@ -65,4 +65,55 @@ function animateSpin(result) {
     }, 2500); 
 }
 
+
+// --- 2. LIVEKIT VIDEO LOGIC ---
+document.getElementById('joinCallBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('joinCallBtn');
+    btn.innerText = "Connecting...";
+    btn.disabled = true;
+
+    const participantName = "Player-" + Math.floor(Math.random() * 1000);
+
+    try {
+        // Fetch token from Render
+        const response = await fetch(`${BACKEND_URL}/livekit-token?room_name=${ROOM_NAME}&participant_name=${participantName}`);
+        const data = await response.json();
+        
+        if (!response.ok) throw new Error("Failed to get token");
+
+        // Connect to LiveKit Room
+        room = new LivekitClient.Room();
+        
+        room.on('trackSubscribed', (track) => {
+            if (track.kind === 'video') {
+                track.attach(document.getElementById('remote-video'));
+            }
+            if (track.kind === 'audio') {
+                const audioEl = track.attach();
+                document.body.appendChild(audioEl); 
+            }
+        });
+
+        await room.connect(data.url, data.token);
+        
+        // Turn on Camera and Mic
+        await room.localParticipant.setCameraEnabled(true);
+        await room.localParticipant.setMicrophoneEnabled(true);
+        
+        // Show local video
+        const localVideoTrack = Array.from(room.localParticipant.videoTracks.values())[0].track;
+        localVideoTrack.attach(document.getElementById('local-video'));
+
+        btn.innerText = "Connected!";
+        btn.style.backgroundColor = "#333";
+
+    } catch (error) {
+        console.error("Video Error:", error);
+        btn.innerText = "Retry Video";
+        btn.disabled = false;
+        alert("Could not connect to video. Check console for details.");
+    }
+});
+
+// Start the game connection
 connectWebSocket();

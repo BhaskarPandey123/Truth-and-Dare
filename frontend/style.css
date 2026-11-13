@@ -14,24 +14,56 @@ body {
     overflow: hidden;
 }
 
-/* Video Area */
+/* Video Area (Mobile default: Top half) */
 #video-container {
     width: 100%;
-    height: 25vh;
+    height: 40vh;
     background-color: #000;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     border-bottom: 2px solid #333;
 }
 
-/* Game Area */
+.video-wrapper {
+    display: flex;
+    gap: 10px;
+    width: 90%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+#local-video, #remote-video {
+    width: 50%;
+    height: 80%;
+    background-color: #222;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid #444;
+}
+
+#joinCallBtn {
+    background-color: #2ed573;
+    font-size: 1rem;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    box-shadow: none;
+}
+
+#joinCallBtn:active {
+    transform: scale(0.95);
+}
+
+/* Game Area (Mobile default: Bottom half) */
 .game-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-grow: 1;
+    height: 60vh;
     width: 100%;
     padding: 20px;
 }
@@ -52,20 +84,20 @@ h1 {
 }
 
 .spinner-box {
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     border: 4px solid #444;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     background-color: #1e1e1e;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
 .spinner-item {
-    font-size: 80px;
+    font-size: 60px;
     transition: transform 2s cubic-bezier(0.25, 1, 0.5, 1);
     display: inline-block;
 }
@@ -97,7 +129,7 @@ button:active {
 }
 
 #resultText {
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: #f1c40f;
     text-shadow: 0 0 10px #f1c40f;
 }
@@ -105,18 +137,23 @@ button:active {
 /* Responsive tweaks for larger screens (laptops/tablets) */
 @media (min-width: 768px) {
     body {
-        flex-direction: row-reverse;
+        flex-direction: row-reverse; /* Game on left, Video on right */
     }
+    
     #video-container {
         width: 40%;
         height: 100vh;
         border-bottom: none;
         border-left: 2px solid #333;
     }
+    
     .game-container {
         width: 60%;
+        height: 100vh;
     }
+    
     h1 { font-size: 3rem; }
-    .spinner-box { width: 300px; height: 300px; }
-    .spinner-item { font-size: 120px; }
+    .spinner-box { width: 250px; height: 250px; }
+    .spinner-item { font-size: 100px; }
+    #resultText { font-size: 3rem; }
 }
